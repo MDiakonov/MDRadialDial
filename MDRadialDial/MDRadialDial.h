@@ -32,7 +32,11 @@
 #import <UIKit/UIKit.h>
 
 
-#define kDefaultSize CGRectMake(10, 100, 300, 300)
+#define kDefaultSize      CGSizeMake(100, 100)
+#define kExtraSmallSize   CGSizeMake(50, 50)
+#define kSmallSize        CGSizeMake(100, 100)
+#define kMediumSize       CGSizeMake(200, 200)
+#define kLargeSize        CGSizeMake(300, 300)
 
 @class MDRadialDial;
 
@@ -53,14 +57,19 @@
 /**
  * Creates a radial dial with the specified parameters.
  *
- * @param frame     (CGRect) The frame which specifies the size of the radial dial.
- * @param delegate  (id <MDRadialDialDelegate>) The objects delegate. Must implement the required protocol methods
- * @param minValue  (int) The minimum value of the radial dial
- * @param maxValue  (int) The maximum value of the radial dial
+ * @param frame        (CGRect) The frame which specifies the size of the radial dial.
+ * @param delegate     (id <MDRadialDialDelegate>) The objects delegate. Must implement the required protocol methods
+ * @param minValue     (double) The minimum value of the radial dial
+ * @param maxValue     (double) The maximum value of the radial dial
+ * @param initialValue (double) The initialValue at which to set the dial indicator and current value
  * 
  * @returns MDRadialDial instance
  *
 */
-- (instancetype)initWithFrame:(CGRect)frame delegate:(id<MDRadialDialDelegate>)delegate minValue:(int)minValue maxValue:(int)maxValue;
+- (instancetype)initWithFrame:(CGRect)frame
+                     delegate:(id<MDRadialDialDelegate>)delegate
+                     minValue:(double)minValue
+                     maxValue:(double)maxValue
+                 initialValue:(double)initialValue;
 
 @end

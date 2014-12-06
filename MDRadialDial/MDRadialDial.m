@@ -13,24 +13,29 @@
 
 @interface MDRadialDial ()
 
-@property (assign) int minValue;
-@property (assign) int maxValue;
-
+@property (assign) double minValue;
+@property (assign) double maxValue;
+@property (assign) double initialValue;
+@property (assign) int lineWidth;
 
 @end
 
 @implementation MDRadialDial
 
-- (instancetype)initWithFrame:(CGRect)frame delegate:(id)delegate minValue:(int)minValue maxValue:(int)maxValue{
+- (instancetype)initWithFrame:(CGRect)frame delegate:(id<MDRadialDialDelegate>)delegate minValue:(double)minValue maxValue:(double)maxValue
+                 initialValue:(double)initialValue{
     
     self = [super initWithFrame:frame];
     if(!self) return nil;
     
     self.backgroundColor = [UIColor colorWithRed:.65 green:.65 blue:.65 alpha:1.0];
-    
+    //self.backgroundColor = [UIColor clearColor];
     _delegate = delegate;
     _minValue = minValue;
     _maxValue = maxValue;
+    _initialValue  = initialValue;
+    
+    _lineWidth = (self.frame.size.width / 50) + 3;
     
     return self;
     
@@ -38,7 +43,8 @@
 
 - (instancetype)init{
     
-    return [self initWithFrame:kDefaultSize delegate:nil minValue:0 maxValue:100];
+    CGSize size = kDefaultSize;
+    return [self initWithFrame:CGRectMake(5, 5, size.width, size.height) delegate:nil minValue:0 maxValue:100 initialValue:0];
     
 }
 
@@ -53,62 +59,111 @@
     CGContextRef ctx = UIGraphicsGetCurrentContext();
     CGContextSaveGState(ctx);
     
-    //Draw glow circle
-    CGContextAddArc(ctx, frame.size.width/2, frame.size.height/2, frame.size.width/4 - 8 , 0, 2 * M_PI, 1);
-    CGContextSetLineWidth(ctx, 8);
+    //Draw glow holder circle i.e. circle below the glow
+    CGContextAddArc(ctx, frame.size.width/2, frame.size.height/2, frame.size.width/2 - _lineWidth, 0, 2 * M_PI, 1);
+    CGContextSetLineWidth(ctx, _lineWidth);
     CGContextSetLineCap(ctx, kCGLineCapButt);
-    [[UIColor greenColor] setStroke];
+    CGContextSetRGBStrokeColor(ctx, .375, .375, .375, 1.0);
+    CGContextDrawPath(ctx, kCGPathStroke);
+    
+    CGContextAddArc(ctx, frame.size.width/2, frame.size.height/2, frame.size.width/2 - _lineWidth , 0, 2 * M_PI, 1);
+    CGContextSetLineWidth(ctx, _lineWidth/2);
+    CGContextSetLineCap(ctx, kCGLineCapButt);
+    [[UIColor whiteColor] setStroke];
+    CGContextSetAlpha(ctx, 0.025f);
+    CGContextDrawPath(ctx, kCGPathStroke);
+    
+    //Restore and re-save the clean context state
+    CGContextRestoreGState(ctx);
+    CGContextSaveGState(ctx);
+    
+    //Draw glow circle
+    CGContextAddArc(ctx, frame.size.width/2, frame.size.height/2, frame.size.width/2 - _lineWidth , 0, 2 * M_PI, 1);
+    CGContextSetLineWidth(ctx, _lineWidth);
+    CGContextSetLineCap(ctx, kCGLineCapButt);
+    CGContextSetRGBStrokeColor(ctx, 124/255.0, 252/255.0, 0/255.0, 1.0);
     CGContextDrawPath(ctx, kCGPathStroke);
     
     //Draw glow effect
-    CGContextSetShadowWithColor(ctx, CGSizeMake(0, 0), 4.0f, [UIColor greenColor].CGColor);
-    CGContextAddArc(ctx, frame.size.width/2, frame.size.height/2, frame.size.width/4 - 8 , 0, 2 * M_PI, 1);
-    CGContextSetLineWidth(ctx, 8);
+    CGContextSetShadowWithColor(ctx, CGSizeMake(0, 0), 5.0f, [UIColor greenColor].CGColor);
+    CGContextAddArc(ctx, frame.size.width/2, frame.size.height/2, frame.size.width/2 - _lineWidth , 0, 2 * M_PI, 1);
+    CGContextSetLineWidth(ctx, _lineWidth);
     CGContextSetLineCap(ctx, kCGLineCapButt);
-    [[UIColor greenColor] setStroke];
+    CGContextSetRGBStrokeColor(ctx, 124/255.0, 252/255.0, 0/255.0, 1.0);
     CGContextDrawPath(ctx, kCGPathStroke);
     
     //Restore and re-save the clean context state
     CGContextRestoreGState(ctx);
     CGContextSaveGState(ctx);
-    
+
     //Draw dial and shadow
-    CGContextSetShadow(ctx, CGSizeMake(8, 10), 10.0f);
-    CGContextAddArc(ctx, frame.size.width/2, frame.size.height/2, frame.size.width/4 - 12 , 0, 2 * M_PI, 1);
-    CGContextSetLineWidth(ctx, 8);
+    CGContextSetShadow(ctx, CGSizeMake(8, 10), 14.0f);
+    CGContextAddArc(ctx, frame.size.width/2, frame.size.height/2, frame.size.width/2 - (_lineWidth + (_lineWidth / 2)) , 0, 2 * M_PI, 1);
+    CGContextSetLineWidth(ctx, _lineWidth);
     CGContextSetLineCap(ctx, kCGLineCapButt);
     [[UIColor grayColor] setFill];
-    CGContextDrawPath(ctx, kCGPathFill);    
+    CGContextDrawPath(ctx, kCGPathFill);
     
     //Restore and re-save the clean context state
     CGContextRestoreGState(ctx);
     CGContextSaveGState(ctx);
+
+    //Draw dial outline
+    CGContextAddArc(ctx, frame.size.width/2, frame.size.height/2, frame.size.width/2 - (_lineWidth + (_lineWidth / 2)) , 0, 2 * M_PI, 1);
+    CGContextSetLineWidth(ctx, 1);
+    CGContextSetLineCap(ctx, kCGLineCapButt);
+    [[UIColor blackColor] setStroke];
+    CGContextSetAlpha(ctx, 0.06f);
+    CGContextDrawPath(ctx, kCGPathStroke);
+    
+    //Restore and re-save the clean context state
+    CGContextRestoreGState(ctx);
+    CGContextSaveGState(ctx);
+//
+//    //Draw dial indicator
+//    CGContextAddArc(ctx, frame.size.width/2 - 32, frame.size.height/2 + 25, 14 , 0, 2 * M_PI, 1);
+//    CGContextSetLineWidth(ctx, 1);
+//    CGContextSetLineCap(ctx, kCGLineCapButt);
+//    CGContextSetRGBFillColor(ctx, .466, .466, .466, 1.0);
+//    CGContextDrawPath(ctx, kCGPathFill);
+//    
+    //Create clipping mask for radial gradient
+    UIGraphicsBeginImageContext(self.frame.size);
+    CGContextRef maskCtx = UIGraphicsGetCurrentContext();
+    
+    CGContextSetShadow(maskCtx, CGSizeMake(8, 10), 10.0f);
+    CGContextAddArc(maskCtx, frame.size.width/2, frame.size.height/2, frame.size.width/2 - (_lineWidth + (_lineWidth / 2)), 0, 2 * M_PI, 1);
+    CGContextSetLineWidth(maskCtx, _lineWidth);
+    CGContextSetLineCap(maskCtx, kCGLineCapButt);
+    [[UIColor redColor] setFill];
+    CGContextDrawPath(maskCtx, kCGPathFill);
+    
+    CGImageRef mask = CGBitmapContextCreateImage(UIGraphicsGetCurrentContext());
+    UIGraphicsEndImageContext();
+    
+    //Clip context
+    CGContextClipToMask(ctx, self.bounds, mask);
+    CGImageRelease(mask);
     
     //Apply radial gradient to dial
     CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
     CGFloat components[] = {
-                            1.0,1.0,1.0,0.10,
+                            1.0,1.0,1.0,0.1,
                             1.0,1.0,1.0,0.02
                            };
     
-    CGFloat locations[] = {0.0, 1.0};
+    CGFloat locations[] = {0.0,0.25,0.5,0.75,1.0};
     CGGradientRef gradient = CGGradientCreateWithColorComponents(colorSpace, components, locations, 2);
-    CGPoint start = CGPointMake(frame.size.width/3, frame.size.height/3);
-    CGPoint end = CGPointMake(frame.size.width/3, frame.size.height/3);
-    CGContextDrawRadialGradient(ctx, gradient, start, 5.0, end, 70.0, kCGGradientDrawsBeforeStartLocation);
+    CGPoint startPoint = CGPointMake(_lineWidth, _lineWidth);
+    CGPoint endPoint = CGPointMake(_lineWidth, _lineWidth);
+    CGContextDrawRadialGradient(ctx, gradient, startPoint, 1, endPoint, frame.size.width/2 + frame.size.width / 8, kCGGradientDrawsBeforeStartLocation);
     CGGradientRelease(gradient);
     CGColorSpaceRelease(colorSpace);
     
     //Restore and re-save the clean context state
     CGContextRestoreGState(ctx);
     CGContextSaveGState(ctx);
-    
-    //Draw dial indicator
-    CGContextAddArc(ctx, frame.size.width/2 - 32, frame.size.height/2 + 25, 14 , 0, 2 * M_PI, 1);
-    CGContextSetLineWidth(ctx, 1);
-    CGContextSetLineCap(ctx, kCGLineCapButt);
-    CGContextSetRGBFillColor(ctx, .57, .57, .57, 1.0);
-    CGContextDrawPath(ctx, kCGPathFill);
+
     
 }
 
@@ -120,12 +175,16 @@
     
     [super beginTrackingWithTouch:touch withEvent:event];
     
+    CGPoint touchLocation = [touch locationInView:self];
+    
     return YES;
     
 }
 - (BOOL)continueTrackingWithTouch:(UITouch *)touch withEvent:(UIEvent *)event{
     
     [super continueTrackingWithTouch:touch withEvent:event];
+    
+    CGPoint touchLocation = [touch locationInView:self];
     
     return YES;
     
@@ -134,6 +193,7 @@
     
     [super endTrackingWithTouch:touches withEvent:event];
     
+    CGPoint touchLocation = [touches locationInView:self];
     
 }
 

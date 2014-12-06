@@ -7,9 +7,10 @@
 //
 
 #import "ViewController.h"
+#import "Common.h"
 #import "MDRadialDial.h"
 
-@interface ViewController ()
+@interface ViewController () <MDRadialDialDelegate>
 
 @end
 
@@ -28,11 +29,16 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    MDRadialDial *radialDial = [[MDRadialDial alloc] initWithFrame:CGRectMake(5, 5, 300, 300) delegate:self minValue:0 maxValue:100];
+    CGSize size = kLargeSize;
+    MDRadialDial *radialDial = [[MDRadialDial alloc] initWithFrame:CGRectMake(5,5,size.width,size.height) delegate:self minValue:0 maxValue:100 initialValue:0];
     [self.view addSubview:radialDial];
     
 }
-
+- (void)radialDial:(MDRadialDial *)radialDial didChangeWithValue:(int)value{
+    
+    DLog(@"RadialDial value: %d", value);
+    
+}
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
