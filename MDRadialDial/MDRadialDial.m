@@ -1,20 +1,41 @@
-//
-//  MDRadialDial.m
-//  MDRadialDial
-//
-//  Created by Michael Diakonov on 12/4/14.
-//  Copyright (c) 2014 Michael Diakonov. All rights reserved.
-//
+/**
+ * @file MDRadialDial.m
+ * @author Michael Diakonov
+ * @version 1.0
+ *
+ * @section LICENSE
+ *
+ * The MIT License (MIT)
+ *
+ * Copyright (c) 2014 Michael Diakonov
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ *
+ */
 
 #import "MDRadialDial.h"
-
 #import "Common.h"
 
+#define kLinePadding 4
 
 @interface MDRadialDial ()
 
-@property (assign) double minValue;
-@property (assign) double maxValue;
 @property (assign) double initialValue;
 @property (assign) int lineWidth;
 
@@ -22,8 +43,12 @@
 
 @implementation MDRadialDial
 
-- (instancetype)initWithFrame:(CGRect)frame delegate:(id<MDRadialDialDelegate>)delegate minValue:(double)minValue maxValue:(double)maxValue
-                 initialValue:(double)initialValue{
+- (instancetype)initWithFrame:(CGRect)frame delegate:(id<MDRadialDialDelegate>)delegate initialValue:(double)initialValue{
+    
+    CGSize size = kMDRadialDialExtraSmallSize;
+    
+    if((frame.size.width != frame.size.height) || (frame.size.width <  size.width))
+        frame = CGRectMake(frame.origin.x, frame.origin.y, size.width, size.height);
     
     self = [super initWithFrame:frame];
     if(!self) return nil;
@@ -31,11 +56,9 @@
     self.backgroundColor = [UIColor colorWithRed:.65 green:.65 blue:.65 alpha:1.0];
     //self.backgroundColor = [UIColor clearColor];
     _delegate = delegate;
-    _minValue = minValue;
-    _maxValue = maxValue;
-    _initialValue  = initialValue;
+    _initialValue  = initialValue <= 1.0 ? initialValue : 0.0;
     
-    _lineWidth = (self.frame.size.width / 50) + 3;
+    _lineWidth = (self.frame.size.width / 50) + kLinePadding;
     
     return self;
     
@@ -43,8 +66,8 @@
 
 - (instancetype)init{
     
-    CGSize size = kDefaultSize;
-    return [self initWithFrame:CGRectMake(5, 5, size.width, size.height) delegate:nil minValue:0 maxValue:100 initialValue:0];
+    CGSize size = kMDRadialDialDefaultSize;
+    return [self initWithFrame:CGRectMake(5, 5, size.width, size.height) delegate:nil initialValue:0];
     
 }
 
@@ -119,14 +142,16 @@
     //Restore and re-save the clean context state
     CGContextRestoreGState(ctx);
     CGContextSaveGState(ctx);
-//
-//    //Draw dial indicator
-//    CGContextAddArc(ctx, frame.size.width/2 - 32, frame.size.height/2 + 25, 14 , 0, 2 * M_PI, 1);
-//    CGContextSetLineWidth(ctx, 1);
-//    CGContextSetLineCap(ctx, kCGLineCapButt);
-//    CGContextSetRGBFillColor(ctx, .466, .466, .466, 1.0);
-//    CGContextDrawPath(ctx, kCGPathFill);
-//    
+    
+    
+    //Draw dial indicator
+    int dialWidth = frame.size.width/10;
+    CGContextAddArc(ctx,frame.size.width/2, frame.size.width - (_lineWidth * 2.6 + dialWidth), dialWidth , 0, 2 * M_PI, 1);
+    CGContextSetLineWidth(ctx, 1);
+    CGContextSetLineCap(ctx, kCGLineCapButt);
+    CGContextSetRGBFillColor(ctx, .456, .456, .456, 1.0);
+    CGContextDrawPath(ctx, kCGPathFill);
+    
     //Create clipping mask for radial gradient
     UIGraphicsBeginImageContext(self.frame.size);
     CGContextRef maskCtx = UIGraphicsGetCurrentContext();

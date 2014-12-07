@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IDESourceControlProjectFavoriteDictionaryKey</key>
+	<false/>
+	<key>IDESourceControlProjectIdentifier</key>
+	<string>74A83109-DF42-46C3-B5D5-0ADA7A7B8296</string>
+	<key>IDESourceControlProjectName</key>
+	<string>MDRadialDial</string>
+	<key>IDESourceControlProjectOriginsDictionary</key>
+	<dict>
+		<key>AE9B14F99761F7461D47AAC2B5146161DD807A2B</key>
+		<string>github.com:MDiakonov/MDRadialDial.git</string>
+	</dict>
+	<key>IDESourceControlProjectPath</key>
+	<string>MDRadialDial.xcodeproj</string>
+	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
+	<dict>
+		<key>AE9B14F99761F7461D47AAC2B5146161DD807A2B</key>
+		<string>../..</string>
+	</dict>
+	<key>IDESourceControlProjectURL</key>
+	<string>github.com:MDiakonov/MDRadialDial.git</string>
+	<key>IDESourceControlProjectVersion</key>
+	<integer>111</integer>
+	<key>IDESourceControlProjectWCCIdentifier</key>
+	<string>AE9B14F99761F7461D47AAC2B5146161DD807A2B</string>
+	<key>IDESourceControlProjectWCConfigurations</key>
+	<array>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>AE9B14F99761F7461D47AAC2B5146161DD807A2B</string>
+			<key>IDESourceControlWCCName</key>
+			<string>MDRadialDial</string>
+		</dict>
+	</array>
+</dict>
+</plist>

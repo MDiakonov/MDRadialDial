@@ -29,14 +29,14 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    CGSize size = kLargeSize;
-    MDRadialDial *radialDial = [[MDRadialDial alloc] initWithFrame:CGRectMake(5,5,size.width,size.height) delegate:self minValue:0 maxValue:100 initialValue:0];
+    CGSize size = CGSizeMake(300, 300);
+    MDRadialDial *radialDial = [[MDRadialDial alloc] initWithFrame:CGRectMake(5,20,size.width,size.height) delegate:self initialValue:0];
     [self.view addSubview:radialDial];
     
 }
-- (void)radialDial:(MDRadialDial *)radialDial didChangeWithValue:(int)value{
+- (void)radialDial:(MDRadialDial *)radialDial didChangeWithValue:(double)value{
     
-    DLog(@"RadialDial value: %d", value);
+    DLog(@"RadialDial value: %f", value);
     
 }
 - (void)didReceiveMemoryWarning {
