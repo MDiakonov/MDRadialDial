@@ -209,7 +209,22 @@
     
     [super continueTrackingWithTouch:touch withEvent:event];
     
+    float AngleInRadians = 0.0;
+    
     CGPoint touchLocation = [touch locationInView:self];
+    
+    float preRadian = atan2(touchLocation.y - self.frame.size.width/2, self.frame.size.width/2 - touchLocation.x );
+    
+    if (preRadian < 0) {
+        AngleInRadians = fabsf(preRadian);
+    }
+    
+    if (preRadian > 0) {
+        float twoPi = M_PI*2;
+        AngleInRadians = twoPi - preRadian;
+    }
+    
+    DLog(@"AngleInRadian %f",AngleInRadians);
     
     return YES;
     
