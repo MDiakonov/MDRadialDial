@@ -37,6 +37,7 @@
 @interface MDRadialDial ()
 
 @property (assign) double initialValue;
+@property (assign) double angleInRadians;
 @property (assign) int lineWidth;
 
 @end
@@ -59,6 +60,8 @@
     _initialValue  = initialValue <= 1.0 ? initialValue : 0.0;
     
     _lineWidth = (self.frame.size.width / 50) + kLinePadding;
+    
+    _angleInRadians = 0.0;
     
     return self;
     
@@ -101,7 +104,8 @@
     CGContextSaveGState(ctx);
     
     //Draw glow circle
-    CGContextAddArc(ctx, frame.size.width/2, frame.size.height/2, frame.size.width/2 - _lineWidth , 0, 2 * M_PI, 1);
+    //CGContextAddArc(ctx, frame.size.width/2, frame.size.height/2, frame.size.width/2 - _lineWidth , 0, 2 * M_PI, 1);
+    CGContextAddArc(ctx, frame.size.width/2, frame.size.height/2, frame.size.width/2 - _lineWidth , 0, _angleInRadians, 1); //Test
     CGContextSetLineWidth(ctx, _lineWidth);
     CGContextSetLineCap(ctx, kCGLineCapButt);
     CGContextSetRGBStrokeColor(ctx, 124/255.0, 252/255.0, 0/255.0, 1.0);
@@ -109,7 +113,8 @@
     
     //Draw glow effect
     CGContextSetShadowWithColor(ctx, CGSizeMake(0, 0), 5.0f, [UIColor greenColor].CGColor);
-    CGContextAddArc(ctx, frame.size.width/2, frame.size.height/2, frame.size.width/2 - _lineWidth , 0, 2 * M_PI, 1);
+    //CGContextAddArc(ctx, frame.size.width/2, frame.size.height/2, frame.size.width/2 - _lineWidth , 0, 2 * M_PI, 1);
+    CGContextAddArc(ctx, frame.size.width/2, frame.size.height/2, frame.size.width/2 - _lineWidth , 0, _angleInRadians, 1); //Test
     CGContextSetLineWidth(ctx, _lineWidth);
     CGContextSetLineCap(ctx, kCGLineCapButt);
     CGContextSetRGBStrokeColor(ctx, 124/255.0, 252/255.0, 0/255.0, 1.0);
@@ -223,6 +228,10 @@
         float twoPi = M_PI*2;
         AngleInRadians = twoPi - preRadian;
     }
+    
+    _angleInRadians = AngleInRadians;
+    
+    [self setNeedsDisplay];
     
     DLog(@"AngleInRadian %f",AngleInRadians);
     
