@@ -32,6 +32,10 @@
 #import "MDRadialDial.h"
 #import "Common.h"
 
+#define RADIANS_TO_DEGREES(radians) ((radians) * (180.0 / M_PI))
+#define DEGREES_TO_RADIANS(angle) ((angle) / 180.0 * M_PI)
+
+#define kRadianAnglePadding DEGREES_TO_RADIANS(90)
 #define kLinePadding 4
 
 @interface MDRadialDial ()
@@ -54,14 +58,12 @@
     self = [super initWithFrame:frame];
     if(!self) return nil;
     
-    self.backgroundColor = [UIColor colorWithRed:.65 green:.65 blue:.65 alpha:1.0];
-    //self.backgroundColor = [UIColor clearColor];
+    self.backgroundColor = [UIColor clearColor];
     _delegate = delegate;
     _initialValue  = initialValue <= 1.0 ? initialValue : 0.0;
-    
     _lineWidth = (self.frame.size.width / 50) + kLinePadding;
     
-    _angleInRadians = 0.0;
+    _angleInRadians = DEGREES_TO_RADIANS(_initialValue);
     
     return self;
     
@@ -103,9 +105,12 @@
     CGContextRestoreGState(ctx);
     CGContextSaveGState(ctx);
     
+    double startLoc = kRadianAnglePadding;
+    double endLoc = _angleInRadians + kRadianAnglePadding;
+    
     //Draw glow circle
     //CGContextAddArc(ctx, frame.size.width/2, frame.size.height/2, frame.size.width/2 - _lineWidth , 0, 2 * M_PI, 1);
-    CGContextAddArc(ctx, frame.size.width/2, frame.size.height/2, frame.size.width/2 - _lineWidth , 0, _angleInRadians, 1); //Test
+    CGContextAddArc(ctx, frame.size.width/2, frame.size.height/2, frame.size.width/2 - _lineWidth ,startLoc , endLoc, 0); //Test
     CGContextSetLineWidth(ctx, _lineWidth);
     CGContextSetLineCap(ctx, kCGLineCapButt);
     CGContextSetRGBStrokeColor(ctx, 124/255.0, 252/255.0, 0/255.0, 1.0);
@@ -114,7 +119,7 @@
     //Draw glow effect
     CGContextSetShadowWithColor(ctx, CGSizeMake(0, 0), 5.0f, [UIColor greenColor].CGColor);
     //CGContextAddArc(ctx, frame.size.width/2, frame.size.height/2, frame.size.width/2 - _lineWidth , 0, 2 * M_PI, 1);
-    CGContextAddArc(ctx, frame.size.width/2, frame.size.height/2, frame.size.width/2 - _lineWidth , 0, _angleInRadians, 1); //Test
+    CGContextAddArc(ctx, frame.size.width/2, frame.size.height/2, frame.size.width/2 - _lineWidth , startLoc, endLoc, 0); //Test
     CGContextSetLineWidth(ctx, _lineWidth);
     CGContextSetLineCap(ctx, kCGLineCapButt);
     CGContextSetRGBStrokeColor(ctx, 124/255.0, 252/255.0, 0/255.0, 1.0);
@@ -124,6 +129,8 @@
     CGContextRestoreGState(ctx);
     CGContextSaveGState(ctx);
 
+    //****************************************************
+    //****************************************************
     //Draw dial and shadow
     CGContextSetShadow(ctx, CGSizeMake(8, 10), 14.0f);
     CGContextAddArc(ctx, frame.size.width/2, frame.size.height/2, frame.size.width/2 - (_lineWidth + (_lineWidth / 2)) , 0, 2 * M_PI, 1);
@@ -131,6 +138,7 @@
     CGContextSetLineCap(ctx, kCGLineCapButt);
     [[UIColor grayColor] setFill];
     CGContextDrawPath(ctx, kCGPathFill);
+    
     
     //Restore and re-save the clean context state
     CGContextRestoreGState(ctx);
@@ -156,6 +164,9 @@
     CGContextSetLineCap(ctx, kCGLineCapButt);
     CGContextSetRGBFillColor(ctx, .456, .456, .456, 1.0);
     CGContextDrawPath(ctx, kCGPathFill);
+    
+    //****************************************************
+    //****************************************************
     
     //Create clipping mask for radial gradient
     UIGraphicsBeginImageContext(self.frame.size);
@@ -214,30 +225,26 @@
     
     [super continueTrackingWithTouch:touch withEvent:event];
     
-    float AngleInRadians = 0.0;
-    
     CGPoint touchLocation = [touch locationInView:self];
     
-    float preRadian = atan2(touchLocation.y - self.frame.size.width/2, self.frame.size.width/2 - touchLocation.x );
+    CGRect frame = self.bounds;
     
-    if (preRadian < 0) {
-        AngleInRadians = fabsf(preRadian);
-    }
     
-    if (preRadian > 0) {
-        float twoPi = M_PI*2;
-        AngleInRadians = twoPi - preRadian;
-    }
+    double dy = (touchLocation.y - frame.size.height / 2);
+    double dx = -(touchLocation.x - frame.size.width / 2);
+   
+    double theta = atan2(dy, dx);
+   
+    double angle = (int)(90 - ((theta * 180) / M_PI)) % 360;
     
-    _angleInRadians = AngleInRadians;
+    _angleInRadians = DEGREES_TO_RADIANS(angle);
     
     [self setNeedsDisplay];
-    
-    DLog(@"AngleInRadian %f",AngleInRadians);
     
     return YES;
     
 }
+
 - (void)endTrackingWithTouch:(UITouch *)touches withEvent:(UIEvent *)event{
     
     [super endTrackingWithTouch:touches withEvent:event];

@@ -62,7 +62,7 @@
  * @param delegate     (id <MDRadialDialDelegate>) The objects delegate. Must implement the required protocol methods
  * @param initialValue (double) The initialValue at which to set the dial indicator and current value. Specify a value between 0.0 and 1.0
  * 
- * @returns MDRadialDial instance
+ * @return MDRadialDial instance
  *
 */
 - (instancetype)initWithFrame:(CGRect)frame

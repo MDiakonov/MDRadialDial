@@ -30,7 +30,11 @@
     [super viewDidLoad];
     
     CGSize size = CGSizeMake(300, 300);
-    MDRadialDial *radialDial = [[MDRadialDial alloc] initWithFrame:CGRectMake(5,20,size.width,size.height) delegate:self initialValue:0];
+    
+    MDRadialDial *radialDial = [[MDRadialDial alloc] initWithFrame:CGRectMake(5,20,size.width,size.height)
+                                                          delegate:self
+                                                      initialValue:0];
+    
     [self.view addSubview:radialDial];
     
 }
