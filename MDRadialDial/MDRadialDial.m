@@ -129,23 +129,20 @@
     CGContextRestoreGState(ctx);
     CGContextSaveGState(ctx);
 
-    //****************************************************
-    //****************************************************
     //Draw dial and shadow
     CGContextSetShadow(ctx, CGSizeMake(8, 10), 14.0f);
-    CGContextAddArc(ctx, frame.size.width/2, frame.size.height/2, frame.size.width/2 - (_lineWidth + (_lineWidth / 2)) , 0, 2 * M_PI, 1);
+    CGContextAddArc(ctx, frame.size.width/2, frame.size.height/2, frame.size.height/2 - (_lineWidth + (_lineWidth / 2)) , 0, 2 * M_PI, 1);
     CGContextSetLineWidth(ctx, _lineWidth);
     CGContextSetLineCap(ctx, kCGLineCapButt);
     [[UIColor grayColor] setFill];
     CGContextDrawPath(ctx, kCGPathFill);
-    
     
     //Restore and re-save the clean context state
     CGContextRestoreGState(ctx);
     CGContextSaveGState(ctx);
 
     //Draw dial outline
-    CGContextAddArc(ctx, frame.size.width/2, frame.size.height/2, frame.size.width/2 - (_lineWidth + (_lineWidth / 2)) , 0, 2 * M_PI, 1);
+    CGContextAddArc(ctx, frame.size.width/2, frame.size.height/2, frame.size.height/2 - (_lineWidth + (_lineWidth / 2)) , 0, 2 * M_PI, 1);
     CGContextSetLineWidth(ctx, 1);
     CGContextSetLineCap(ctx, kCGLineCapButt);
     [[UIColor blackColor] setStroke];
@@ -156,17 +153,15 @@
     CGContextRestoreGState(ctx);
     CGContextSaveGState(ctx);
     
-    
     //Draw dial indicator
     int dialWidth = frame.size.width/10;
-    CGContextAddArc(ctx,frame.size.width/2, frame.size.width - (_lineWidth * 2.6 + dialWidth), dialWidth , 0, 2 * M_PI, 1);
+    float dialDistance = frame.size.width/3.5;
+    CGContextAddArc(ctx, frame.size.width / 2 + (dialDistance * cos(_angleInRadians+1.5707)), frame.size.height/2+(dialDistance*sin(_angleInRadians+1.5707)), dialWidth , 0, 2 * M_PI, 1);
+    
     CGContextSetLineWidth(ctx, 1);
     CGContextSetLineCap(ctx, kCGLineCapButt);
     CGContextSetRGBFillColor(ctx, .456, .456, .456, 1.0);
     CGContextDrawPath(ctx, kCGPathFill);
-    
-    //****************************************************
-    //****************************************************
     
     //Create clipping mask for radial gradient
     UIGraphicsBeginImageContext(self.frame.size);
